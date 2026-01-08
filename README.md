@@ -60,7 +60,6 @@ text
 
 ### Backend Setup
 
-```bash
 # 1. Clone the repository
 git clone https://github.com/YOUR_USERNAME/ai-data-analyst.git
 cd ai-data-analyst/backend
@@ -80,7 +79,7 @@ cp .env.example .env
 uvicorn main:app --reload
 Backend runs at: http://localhost:8000
 
-Frontend Setup
+##Frontend Setup
 bash
 # 1. Navigate to frontend directory
 cd ../frontend
