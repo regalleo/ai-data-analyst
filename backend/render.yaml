@@ -1,0 +1,56 @@
+# AI Data Analyst - Render Deployment Configuration
+# Deploy with: https://dashboard.render.com/blueprints
+
+services:
+  # Backend Web Service
+  - type: web
+    name: ai-analyst-backend
+    env: python
+    # Root directory in repo
+    repo: https://github.com/your-username/ai-data-analyst
+    branch: main
+    # Build command
+    buildCommand: pip install -r requirements.txt
+    # Start command
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    # Environment variables
+    envVars:
+      - key: GROQ_API_KEY
+        # Set this in Render dashboard for security
+        sync: false
+      - key: SECRET_KEY
+        # Generate with: openssl rand -base64 32
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.11"
+    # Health check
+    healthCheckPath: /
+    # Plan (free = shared CPU, 512MB RAM)
+    plan: free
+
+  # PostgreSQL Database
+  - type: pserv
+    name: ai-analyst-db
+    # Database configuration
+    plan: free
+    # Database name and user
+    databaseName: ai_analytics
+    user: ai_analyst
+    # Environment variable to expose connection string
+    envVars:
+      - key: DATABASE_URL
+        # This will be auto-populated by Render
+        fromService:
+          name: ai-analyst-db
+          property: connectionString
+
+# Explanation:
+# - type: web = Web service (FastAPI)
+# - type: pserv = PostgreSQL service
+# - env: python = Python runtime
+# - plan: free = Free tier (750 hours/month)
+# - sync: false = Don't sync from repo (set in dashboard)
+# - fromService: Creates connection string automatically
+
