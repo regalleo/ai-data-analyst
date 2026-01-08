@@ -1,70 +1,99 @@
 # 🤖 AI Data Analyst
 
-An intelligent data analytics platform powered by AI that automatically cleans datasets, generates visualizations, and answers natural language queries about your data.
+<div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-14.0+-black.svg)
 ![LangChain](https://img.shields.io/badge/LangChain-0.3.22-orange.svg)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+
+**An intelligent data analytics platform powered by AI that automatically cleans datasets, generates visualizations, and answers natural language queries about your data.**
+
+[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](#-api-documentation) • [Usage Guide](#-usage-guide) • [Contributing](#-contributing)
+
+</div>
+
+---
 
 ## ✨ Features
 
-- 🧹 **Intelligent Data Cleaning**
-  - Automatic detection of data quality issues
-  - Smart missing value imputation
-  - Outlier detection and correction
-  - Text-to-number conversion ("twenty-one" → 21)
-  - Email validation and standardization
-  - Date format normalization
+### 🧹 Intelligent Data Cleaning
 
-- 📊 **Smart Visualizations**
-  - Auto-generated charts based on data type
-  - Interactive dashboards with KPI cards
-  - Multiple chart types (bar, pie, line, scatter)
-  - Real-time data filtering
+- **Automatic Quality Detection** - Identifies missing values, outliers, and inconsistencies
+- **Smart Imputation** - Uses statistical methods to fill missing data intelligently
+- **Outlier Management** - Detects and corrects statistical anomalies
+- **Text Normalization** - Converts written numbers to digits ("twenty-one" → 21)
+- **Email Validation** - Standardizes and validates email formats
+- **Date Standardization** - Normalizes various date formats automatically
 
-- 💬 **Natural Language Queries**
-  - Ask questions in plain English
-  - AI-powered SQL generation
-  - Context-aware responses
-  - Chart recommendations
+### 📊 Smart Visualizations
 
-- 🔐 **Secure & Multi-tenant**
-  - JWT-based authentication
-  - User data isolation
-  - Role-based access control
+- **Auto-Generated Charts** - Automatically selects optimal chart types based on data
+- **Interactive Dashboards** - Dynamic KPI cards with real-time updates
+- **Multiple Chart Types** - Bar, pie, line, scatter, and more
+- **Real-Time Filtering** - Filter and drill down into your data instantly
+
+### 💬 Natural Language Queries
+
+- **Plain English Questions** - No SQL knowledge required
+- **AI-Powered SQL Generation** - Translates natural language to optimized queries
+- **Context-Aware Responses** - Understands follow-up questions and context
+- **Smart Recommendations** - Suggests relevant charts and analyses
+
+### 🔐 Enterprise-Grade Security
+
+- **JWT Authentication** - Secure token-based authentication
+- **Multi-Tenant Architecture** - Complete data isolation between users
+- **Role-Based Access Control** - Fine-grained permissions management
+- **Secure API Endpoints** - All endpoints protected with authentication
+
+---
 
 ## 🏗️ Architecture
 
-┌─────────────────┐ ┌──────────────────┐ ┌─────────────────┐
-│ Next.js UI │◄────►│ FastAPI API │◄────►│ SQLite/PG DB │
-│ (Frontend) │ │ (Backend) │ │ (Storage) │
-└─────────────────┘ └──────────────────┘ └─────────────────┘
-│
-▼
-┌──────────────────┐
-│ LangChain Agent │
-│ + Groq LLM │
-│ + FAISS RAG │
-└──────────────────┘
+```
+┌─────────────────┐      ┌──────────────────┐      ┌─────────────────┐
+│   Next.js UI    │◄────►│   FastAPI API    │◄────►│  SQLite/PG DB   │
+│   (Frontend)    │      │    (Backend)     │      │   (Storage)     │
+└─────────────────┘      └──────────────────┘      └─────────────────┘
+                                  │
+                                  ▼
+                         ┌──────────────────┐
+                         │  LangChain Agent │
+                         │   + Groq LLM     │
+                         │   + FAISS RAG    │
+                         └──────────────────┘
+```
 
-text
+### Key Components
+
+- **Frontend**: Next.js 14 with React Server Components
+- **Backend**: FastAPI with async support
+- **AI Engine**: LangChain agents powered by Groq's Llama 3.3 70B
+- **Vector Store**: FAISS for semantic search and RAG
+- **Database**: SQLite for development, PostgreSQL for production
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python 3.10 or higher
-- Node.js 18 or higher
-- Groq API Key ([Get one free](https://console.groq.com/))
+Ensure you have the following installed:
+
+- **Python 3.10+** ([Download](https://www.python.org/downloads/))
+- **Node.js 18+** ([Download](https://nodejs.org/))
+- **Groq API Key** ([Get free key](https://console.groq.com/))
 
 ### Backend Setup
 
+```bash
 # 1. Clone the repository
 git clone https://github.com/YOUR_USERNAME/ai-data-analyst.git
 cd ai-data-analyst/backend
 
-# 2. Create virtual environment
+# 2. Create and activate virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
@@ -75,12 +104,18 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env and add your GROQ_API_KEY
 
-# 5. Run the backend
-uvicorn main:app --reload
-Backend runs at: http://localhost:8000
+# 5. Initialize the database
+python -c "from database import init_db; init_db()"
 
-##Frontend Setup
-bash
+# 6. Run the backend server
+uvicorn main:app --reload
+```
+
+✅ **Backend is now running at:** `http://localhost:8000`
+
+### Frontend Setup
+
+```bash
 # 1. Navigate to frontend directory
 cd ../frontend
 
@@ -91,188 +126,478 @@ yarn install
 
 # 3. Set up environment variables
 cp .env.example .env.local
+# Edit .env.local if needed
 
-# 4. Run the frontend
+# 4. Run the development server
 npm run dev
 # or
 yarn dev
-Frontend runs at: http://localhost:3000
+```
 
-📚 API Documentation
-Once running, visit:
+✅ **Frontend is now running at:** `http://localhost:3000`
 
-Swagger UI: http://localhost:8000/docs
+---
 
-ReDoc: http://localhost:8000/redoc
+## 📚 API Documentation
 
-🔑 Environment Variables
-Backend (backend/.env)
-text
-GROQ_API_KEY=gsk_...              # Your Groq API key
-SECRET_KEY=your-secret-key         # JWT secret
-DATABASE_URL=sqlite:///./database.db
-Frontend (frontend/.env.local)
-text
+Interactive API documentation is available once the backend is running:
+
+- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+
+### Key Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/auth/register` | POST | Register new user |
+| `/auth/login` | POST | Login and get JWT token |
+| `/datasets/upload` | POST | Upload CSV dataset |
+| `/datasets/{id}/analyze` | GET | Analyze data quality |
+| `/datasets/{id}/clean` | POST | Clean dataset |
+| `/datasets/{id}/query` | POST | Natural language query |
+| `/datasets/{id}/visualize` | GET | Get visualizations |
+
+---
+
+## 🔑 Environment Variables
+
+### Backend Configuration
+
+Create a `.env` file in the `backend/` directory:
+
+```env
+# Required
+GROQ_API_KEY=gsk_...              # Your Groq API key (required)
+SECRET_KEY=your-secret-key-here   # JWT secret (generate with: openssl rand -hex 32)
+
+# Database
+DATABASE_URL=sqlite:///./database.db  # Use PostgreSQL in production
+
+# Optional
+DEBUG=True                        # Enable debug mode
+LOG_LEVEL=INFO                    # Logging level
+MAX_UPLOAD_SIZE=10485760          # Max file size (10MB)
+```
+
+### Frontend Configuration
+
+Create a `.env.local` file in the `frontend/` directory:
+
+```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
-📖 Usage Guide
-1. Register/Login
-Create an account or sign in to access the platform.
+NEXT_PUBLIC_APP_NAME=AI Data Analyst
+```
 
-2. Upload Dataset
-Click "Upload Dataset"
+---
 
-Select a CSV file
+## 📖 Usage Guide
 
-System automatically analyzes data quality
+### Step 1: Register/Login
 
-3. Clean Your Data
-If issues are detected:
+- Navigate to `http://localhost:3000`
+- Create a new account or sign in with existing credentials
+- Receive JWT token for authenticated requests
 
-Click "Clean Dataset"
+### Step 2: Upload Dataset
 
-Review cleaning preview
+- Click **"Upload Dataset"** button
+- Select a CSV file (max 10MB)
+- System automatically analyzes data quality
+- View summary statistics and quality metrics
 
-Apply automated fixes
+### Step 3: Clean Your Data
 
-4. Query Your Data
-Ask questions like:
+If data quality issues are detected:
 
-"Show me a pie chart by vendor"
+- Click **"Clean Dataset"** button
+- Review cleaning preview and recommendations
+- Apply automated fixes with one click
+- Download cleaned dataset if needed
 
-"What's the average price?"
+### Step 4: Query Your Data
 
-"Compare sales by category"
+Ask questions in natural language:
 
-5. Visualize Results
-View auto-generated:
+- *"Show me a pie chart of sales by vendor"*
+- *"What's the average price per category?"*
+- *"Compare revenue across different regions"*
+- *"Find the top 5 products by sales"*
 
-Interactive charts
+### Step 5: Visualize Results
 
-KPI cards
+The system automatically generates:
 
-Data tables with filters
+- **Interactive Charts** - Bar, pie, line, scatter plots
+- **KPI Cards** - Key metrics and statistics
+- **Data Tables** - Filterable and sortable views
+- **Export Options** - Download charts as PNG or data as CSV
 
-🛠️ Tech Stack
-Backend
-Technology	Purpose
-FastAPI	Web framework
-LangChain 0.3.x	Agent orchestration
-Groq (Llama 3.3 70B)	LLM inference
-FAISS	Vector search
-Sentence Transformers	Embeddings
-Pandas	Data processing
-SQLAlchemy	ORM
-Frontend
-Technology	Purpose
-Next.js 14	React framework
-Tailwind CSS	Styling
-Recharts	Visualizations
-Axios	HTTP client
-Lucide Icons	Icons
-📂 Project Structure
-text
+---
+
+## 🛠️ Tech Stack
+
+### Backend Technologies
+
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| **FastAPI** | High-performance web framework | 0.104+ |
+| **LangChain** | Agent orchestration & LLM workflows | 0.3.22 |
+| **Groq** | Ultra-fast LLM inference (Llama 3.3 70B) | Latest |
+| **FAISS** | Vector similarity search | Latest |
+| **Sentence Transformers** | Text embeddings | Latest |
+| **Pandas** | Data manipulation & analysis | Latest |
+| **SQLAlchemy** | SQL toolkit & ORM | 2.0+ |
+| **Pydantic** | Data validation | 2.0+ |
+| **Python-Jose** | JWT token handling | Latest |
+
+### Frontend Technologies
+
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| **Next.js** | React framework with SSR | 14.0+ |
+| **React** | UI library | 18+ |
+| **Tailwind CSS** | Utility-first CSS framework | 3.0+ |
+| **Recharts** | Composable charting library | Latest |
+| **Axios** | HTTP client | Latest |
+| **Lucide React** | Icon library | Latest |
+| **React Hook Form** | Form management | Latest |
+
+---
+
+## 📂 Project Structure
+
+```
 ai-data-analyst/
 ├── backend/
-│   ├── main.py                 # FastAPI app entry point
-│   ├── agent.py                # LangChain agent logic
+│   ├── main.py                 # FastAPI application entry point
+│   ├── agent.py                # LangChain agent orchestration
 │   ├── data_cleaner.py         # Data cleaning algorithms
-│   ├── auth.py                 # Authentication & JWT
-│   ├── models.py               # Database models
-│   ├── database.py             # DB connection
-│   ├── rag.py                  # RAG implementation
-│   ├── sql_tool.py             # Safe SQL execution
-│   ├── chart_agent.py          # Chart recommendations
+│   ├── auth.py                 # JWT authentication & authorization
+│   ├── models.py               # SQLAlchemy database models
+│   ├── database.py             # Database connection & initialization
+│   ├── rag.py                  # RAG implementation with FAISS
+│   ├── sql_tool.py             # Safe SQL query execution
+│   ├── chart_agent.py          # Chart recommendation engine
 │   ├── requirements.txt        # Python dependencies
-│   └── .env                    # Environment variables
+│   └── .env                    # Environment variables (create from .env.example)
 │
 ├── frontend/
-│   ├── app/                    # Next.js app directory
-│   ├── components/             # React components
-│   │   ├── DataCleaningModal.tsx
-│   │   ├── DatasetTable.tsx
-│   │   └── ChatInterface.tsx
-│   ├── services/               # API services
+│   ├── app/
+│   │   ├── page.tsx            # Home page
+│   │   ├── login/              # Authentication pages
+│   │   └── dashboard/          # Main dashboard
+│   ├── components/
+│   │   ├── DataCleaningModal.tsx    # Data cleaning UI
+│   │   ├── DatasetTable.tsx         # Dataset display
+│   │   ├── ChatInterface.tsx        # Query interface
+│   │   └── Visualizations.tsx       # Chart components
+│   ├── services/
+│   │   └── api.ts              # API client
 │   ├── package.json            # Node dependencies
-│   └── .env.local              # Frontend env vars
+│   └── .env.local              # Frontend environment variables
 │
 ├── .gitignore
+├── LICENSE
 └── README.md
-🧪 Testing
-Backend Tests
-bash
+```
+
+---
+
+## 🧪 Testing
+
+### Backend Tests
+
+```bash
+cd backend
+
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=. --cov-report=html
+
+# Run specific test file
+pytest tests/test_agent.py
+```
+
+### Frontend Tests
+
+```bash
+cd frontend
+
+# Run all tests
+npm test
+
+# Run with coverage
+npm test -- --coverage
+
+# Run in watch mode
+npm test -- --watch
+```
+
+---
+
+## 🚢 Deployment
+
+### Backend Deployment
+
+#### Option 1: Railway
+
+1. Create account at [Railway.app](https://railway.app)
+2. Connect GitHub repository
+3. Add PostgreSQL database from Railway marketplace
+4. Set environment variables:
+   - `GROQ_API_KEY`
+   - `SECRET_KEY`
+   - `DATABASE_URL` (auto-provided by Railway)
+5. Deploy automatically on push to main branch
+
+#### Option 2: Render
+
+1. Create account at [Render.com](https://render.com)
+2. Create new Web Service from GitHub repo
+3. Select `backend` directory as root
+4. Build Command: `pip install -r requirements.txt`
+5. Start Command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+6. Add PostgreSQL database
+7. Set environment variables
+
+#### Option 3: Fly.io
+
+```bash
+# Install Fly CLI
+curl -L https://fly.io/install.sh | sh
+
+# Login and launch
+fly auth login
+cd backend
+fly launch
+
+# Set secrets
+fly secrets set GROQ_API_KEY=your_key_here
+fly secrets set SECRET_KEY=your_secret_here
+
+# Deploy
+fly deploy
+```
+
+### Frontend Deployment
+
+#### Option 1: Vercel (Recommended)
+
+1. Create account at [Vercel.com](https://vercel.com)
+2. Import your GitHub repository
+3. Set root directory to `frontend`
+4. Configure build settings:
+   - Build Command: `npm run build`
+   - Output Directory: `.next`
+5. Add environment variable:
+   - `NEXT_PUBLIC_API_URL` = your backend URL
+6. Deploy automatically on every push
+
+#### Option 2: Netlify
+
+1. Create account at [Netlify.com](https://netlify.com)
+2. Connect GitHub repository
+3. Base directory: `frontend`
+4. Build command: `npm run build`
+5. Publish directory: `.next`
+6. Add environment variables
+7. Deploy
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how you can help:
+
+### Development Workflow
+
+1. **Fork the repository**
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/ai-data-analyst.git
+   ```
+
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+
+3. **Make your changes**
+   - Write clean, documented code
+   - Add tests for new features
+   - Update documentation as needed
+
+4. **Commit your changes**
+   ```bash
+   git commit -m 'Add amazing feature'
+   ```
+
+5. **Push to your branch**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+
+6. **Open a Pull Request**
+   - Describe your changes clearly
+   - Reference any related issues
+   - Wait for review and address feedback
+
+### Code Style Guidelines
+
+#### Python (Backend)
+- Follow PEP 8 style guide
+- Use Black formatter: `black .`
+- Use type hints where possible
+- Write docstrings for functions and classes
+
+#### TypeScript (Frontend)
+- Follow Airbnb style guide
+- Use Prettier formatter: `npm run format`
+- Use TypeScript strict mode
+- Write meaningful component and variable names
+
+#### Commit Messages
+Follow conventional commits format:
+- `feat:` new feature
+- `fix:` bug fix
+- `docs:` documentation changes
+- `style:` formatting, missing semicolons, etc.
+- `refactor:` code restructuring
+- `test:` adding tests
+- `chore:` maintenance tasks
+
+### Running Tests Before PR
+
+```bash
+# Backend tests
 cd backend
 pytest
-Frontend Tests
-bash
+
+# Frontend tests
 cd frontend
 npm test
-🚢 Deployment
-Backend (Railway/Render/Fly.io)
-Set environment variables
 
-Deploy from GitHub
+# Linting
+npm run lint
+```
 
-Add PostgreSQL addon
+---
 
-Update DATABASE_URL
+## 📝 License
 
-Frontend (Vercel/Netlify)
-Connect GitHub repository
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Set NEXT_PUBLIC_API_URL
+---
 
-Deploy automatically on push
+## 🙏 Acknowledgments
 
-🤝 Contributing
-Contributions are welcome! Please:
+Special thanks to the following projects and organizations:
 
-Fork the repository
+- [LangChain](https://github.com/langchain-ai/langchain) - For the amazing agent framework
+- [Groq](https://groq.com/) - For blazing-fast LLM inference
+- [FastAPI](https://fastapi.tiangolo.com/) - For the excellent web framework
+- [Next.js](https://nextjs.org/) - For the powerful React framework
+- [Vercel](https://vercel.com/) - For hosting and deployment platform
 
-Create a feature branch (git checkout -b feature/amazing-feature)
+---
 
-Commit changes (git commit -m 'Add amazing feature')
+## 📧 Contact
 
-Push to branch (git push origin feature/amazing-feature)
+**Raj Shekhar Singh**
 
-Open a Pull Request
+- GitHub: [@rajshekhar](https://github.com/rajshekhar)
+- Email: rajshekhar@example.com
+- Project Link: [https://github.com/YOUR_USERNAME/ai-data-analyst](https://github.com/YOUR_USERNAME/ai-data-analyst)
 
-📝 License
-This project is licensed under the MIT License - see LICENSE file.
+---
 
-🙏 Acknowledgments
-LangChain for agent framework
+## 🐛 Known Issues
 
-Groq for blazing-fast LLM inference
+- **SQLite Concurrency**: SQLite may lock on concurrent writes. Use PostgreSQL for production environments.
+- **Large Datasets**: Files larger than 10MB may take longer to process. Consider implementing chunking for very large datasets.
+- **API Rate Limits**: Groq free tier has rate limits (60 requests/minute). Implement caching or upgrade to paid tier.
+- **Chart Rendering**: Some complex chart types require specific data structures. Check documentation for requirements.
 
-FastAPI for the amazing web framework
+**Reporting Issues**: Please use the [GitHub Issues](https://github.com/YOUR_USERNAME/ai-data-analyst/issues) page with detailed reproduction steps.
 
-Next.js for the React framework
+---
 
-📧 Contact
-Raj Shekhar Singh - @rajshekhar
+## 🗺️ Roadmap
 
-Project Link: https://github.com/YOUR_USERNAME/ai-data-analyst
+### Version 1.1 (Q1 2026)
+- [ ] Support for Excel files (.xlsx, .xls)
+- [ ] Advanced statistical analysis (correlation, regression)
+- [ ] Export reports as PDF
+- [ ] Data import from Google Sheets
 
-🐛 Known Issues
-SQLite may lock on concurrent writes (use PostgreSQL for production)
+### Version 1.2 (Q2 2026)
+- [ ] Real-time collaboration features
+- [ ] More chart types (heatmaps, treemaps, sankey diagrams)
+- [ ] SQL query builder UI
+- [ ] Scheduled data refreshes
 
-Large datasets (>10MB) may take longer to process
+### Version 2.0 (Q3 2026)
+- [ ] Data versioning and history tracking
+- [ ] Custom data transformations with Python
+- [ ] API rate limiting and caching
+- [ ] Multi-language support (i18n)
+- [ ] Mobile app (React Native)
 
-Groq API has rate limits on free tier
+### Future Considerations
+- [ ] Integration with BI tools (Tableau, Power BI)
+- [ ] Machine learning model training
+- [ ] Automated anomaly detection
+- [ ] Custom dashboard builder
 
-🗺️ Roadmap
- Support for Excel files
+**Have a feature request?** Open an issue with the `enhancement` label!
 
- Advanced statistical analysis
+---
 
- Export reports as PDF
+## 📊 Project Stats
 
- Real-time collaboration
+![GitHub stars](https://img.shields.io/github/stars/YOUR_USERNAME/ai-data-analyst?style=social)
+![GitHub forks](https://img.shields.io/github/forks/YOUR_USERNAME/ai-data-analyst?style=social)
+![GitHub issues](https://img.shields.io/github/issues/YOUR_USERNAME/ai-data-analyst)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/YOUR_USERNAME/ai-data-analyst)
 
- More chart types
+---
 
- SQL query builder UI
+## 💡 FAQ
 
- Data versioning
+### Q: Do I need a paid Groq account?
+A: No, the free tier is sufficient for development and small-scale use. Upgrade for higher rate limits.
 
-Made with ❤️ using FastAPI, Next.js, and LangChain
+### Q: Can I use a different LLM provider?
+A: Yes! The system is designed to be LLM-agnostic. Modify the `agent.py` file to use OpenAI, Anthropic, or other providers.
+
+### Q: Is my data secure?
+A: Yes. All data is stored in your own database with user isolation. We recommend using environment variables for sensitive data.
+
+### Q: Can I deploy this for commercial use?
+A: Yes, this project is MIT licensed. You're free to use it commercially.
+
+### Q: What's the maximum dataset size?
+A: Default limit is 10MB. You can adjust `MAX_UPLOAD_SIZE` in the backend configuration.
+
+---
+
+## 🎯 Performance Tips
+
+1. **Use PostgreSQL in Production**: SQLite is great for development but PostgreSQL handles concurrency better
+2. **Enable Caching**: Cache frequent queries to reduce LLM API calls
+3. **Optimize Large Datasets**: Use pagination and lazy loading for tables with 10,000+ rows
+4. **Index Database Columns**: Add indexes to frequently queried columns
+5. **Use CDN for Frontend**: Deploy frontend assets to CDN for faster loading
+
+---
+
+<div align="center">
+
+**Made with ❤️ using FastAPI, Next.js, and LangChain**
+
+⭐ Star this repo if you find it helpful!
+
+[Report Bug](https://github.com/YOUR_USERNAME/ai-data-analyst/issues) • [Request Feature](https://github.com/YOUR_USERNAME/ai-data-analyst/issues) • [Discussions](https://github.com/YOUR_USERNAME/ai-data-analyst/discussions)
+
+</div>
