@@ -1,229 +1,279 @@
-# AI Data Analyst - Setup Guide
+# 🤖 AI Data Analyst
 
-## Manual Setup Steps to Get the App Running
+An intelligent data analytics platform powered by AI that automatically cleans datasets, generates visualizations, and answers natural language queries about your data.
 
-### Step 1: Install PostgreSQL (if not installed)
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)
+![Next.js](https://img.shields.io/badge/Next.js-14.0+-black.svg)
+![LangChain](https://img.shields.io/badge/LangChain-0.3.22-orange.svg)
 
-**Option A: Using Homebrew (Recommended for Mac)**
+## ✨ Features
+
+- 🧹 **Intelligent Data Cleaning**
+  - Automatic detection of data quality issues
+  - Smart missing value imputation
+  - Outlier detection and correction
+  - Text-to-number conversion ("twenty-one" → 21)
+  - Email validation and standardization
+  - Date format normalization
+
+- 📊 **Smart Visualizations**
+  - Auto-generated charts based on data type
+  - Interactive dashboards with KPI cards
+  - Multiple chart types (bar, pie, line, scatter)
+  - Real-time data filtering
+
+- 💬 **Natural Language Queries**
+  - Ask questions in plain English
+  - AI-powered SQL generation
+  - Context-aware responses
+  - Chart recommendations
+
+- 🔐 **Secure & Multi-tenant**
+  - JWT-based authentication
+  - User data isolation
+  - Role-based access control
+
+## 🏗️ Architecture
+
+┌─────────────────┐ ┌──────────────────┐ ┌─────────────────┐
+│ Next.js UI │◄────►│ FastAPI API │◄────►│ SQLite/PG DB │
+│ (Frontend) │ │ (Backend) │ │ (Storage) │
+└─────────────────┘ └──────────────────┘ └─────────────────┘
+│
+▼
+┌──────────────────┐
+│ LangChain Agent │
+│ + Groq LLM │
+│ + FAISS RAG │
+└──────────────────┘
+
+text
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.10 or higher
+- Node.js 18 or higher
+- Groq API Key ([Get one free](https://console.groq.com/))
+
+### Backend Setup
+
 ```bash
-# Install PostgreSQL
-brew install postgresql@15
+# 1. Clone the repository
+git clone https://github.com/YOUR_USERNAME/ai-data-analyst.git
+cd ai-data-analyst/backend
 
-# Start PostgreSQL service
-brew services start postgresql@15
+# 2. Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Add to PATH (add to ~/.zshrc or ~/.bash_profile)
-echo 'export PATH="/usr/local/opt/postgresql@15/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
-```
-
-**Option B: Download from PostgreSQL.org**
-- Download PostgreSQL 15+ from https://www.postgresql.org/download/
-- Run the installer and follow instructions
-
-### Step 2: Create Database and User
-
-Open terminal and run:
-```bash
-# Switch to postgres user (if needed)
-sudo -u postgres psql
-
-# Or connect directly if you're admin
-psql -U postgres
-
-# In psql, run these commands:
-CREATE DATABASE ai_analytics;
-CREATE USER postgres WITH ENCRYPTED PASSWORD 'postgres';
-GRANT ALL PRIVILEGES ON DATABASE ai_analytics TO postgres;
-ALTER DATABASE ai_analytics OWNER TO postgres;
-
-# Connect to the database
-\c ai_analytics
-
-# Grant schema permissions
-GRANT ALL ON SCHEMA public TO postgres;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO postgres;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO postgres;
-
-# Exit psql
-\q
-```
-
-### Step 3: Install Python Dependencies
-
-```bash
-cd /Users/rajshekharsingh/Desktop/ai-data-analyst/backend
+# 3. Install dependencies
 pip install -r requirements.txt
-```
 
-Or install individually:
-```bash
-pip install fastapi uvicorn pandas sqlalchemy psycopg2-binary python-multipart \
-    langchain openai faiss-cpu rank-bm25 sentence-transformers matplotlib \
-    pydantic python-jose passlib bcrypt PyJWT
-```
+# 4. Set up environment variables
+cp .env.example .env
+# Edit .env and add your GROQ_API_KEY
 
-### Step 4: Set Environment Variables (Optional but Recommended)
+# 5. Run the backend
+uvicorn main:app --reload
+Backend runs at: http://localhost:8000
 
-Create a `.env` file in `/Users/rajshekharsingh/Desktop/ai-data-analyst/backend/`:
-```
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ai_analytics
-OPENAI_API_KEY=your_openai_api_key_here
-SECRET_KEY=your-super-secret-key-change-this
-```
+Frontend Setup
+bash
+# 1. Navigate to frontend directory
+cd ../frontend
 
-### Step 5: Start the Backend Server
+# 2. Install dependencies
+npm install
+# or
+yarn install
 
-```bash
-cd /Users/rajshekharsingh/Desktop/ai-data-analyst/backend
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
+# 3. Set up environment variables
+cp .env.example .env.local
 
-You should see:
-```
-INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-```
-
-### Step 6: Start the Frontend
-
-Open a new terminal:
-```bash
-cd /Users/rajshekharsingh/Desktop/ai-data-analyst/frontend
+# 4. Run the frontend
 npm run dev
-```
+# or
+yarn dev
+Frontend runs at: http://localhost:3000
 
-### Step 7: Access the Application
+📚 API Documentation
+Once running, visit:
 
-- **Frontend**: http://localhost:3000
-- **Backend API Docs**: http://localhost:8000/docs
-- **Health Check**: http://localhost:8000/health
+Swagger UI: http://localhost:8000/docs
 
----
+ReDoc: http://localhost:8000/redoc
 
-## Troubleshooting PostgreSQL
+🔑 Environment Variables
+Backend (backend/.env)
+text
+GROQ_API_KEY=gsk_...              # Your Groq API key
+SECRET_KEY=your-secret-key         # JWT secret
+DATABASE_URL=sqlite:///./database.db
+Frontend (frontend/.env.local)
+text
+NEXT_PUBLIC_API_URL=http://localhost:8000
+📖 Usage Guide
+1. Register/Login
+Create an account or sign in to access the platform.
 
-### If PostgreSQL is not running:
-```bash
-# Check status
-brew services list | grep postgresql
+2. Upload Dataset
+Click "Upload Dataset"
 
-# Start it
-brew services start postgresql@15
+Select a CSV file
 
-# Or if installed differently
-pg_ctl -D /usr/local/var/postgresql@15 start
-```
+System automatically analyzes data quality
 
-### If connection is refused:
-```bash
-# Check if PostgreSQL is listening
-pg_isready -h localhost -p 5432
+3. Clean Your Data
+If issues are detected:
 
-# Check pg_hba.conf (authentication settings)
-```
+Click "Clean Dataset"
 
-### If database doesn't exist:
-```bash
-# Create it
-createdb ai_analytics
-```
+Review cleaning preview
 
-### If you get "role does not exist":
-```bash
-# Create the role
-createuser -s postgres
-```
+Apply automated fixes
 
----
+4. Query Your Data
+Ask questions like:
 
-## Quick One-Line Setup (Run in Terminal)
+"Show me a pie chart by vendor"
 
-```bash
-# 1. Install PostgreSQL
-brew install postgresql@15 2>/dev/null || echo "PostgreSQL may already be installed"
+"What's the average price?"
 
-# 2. Start PostgreSQL
-brew services start postgresql@15 2>/dev/null || pg_ctl -D /usr/local/var/postgresql@15 start
+"Compare sales by category"
 
-# 3. Create database and user (run this in psql)
-# psql -U postgres -c "CREATE DATABASE ai_analytics;" \
-#    -c "CREATE USER postgres WITH ENCRYPTED PASSWORD 'postgres';" \
-#    -c "GRANT ALL PRIVILEGES ON DATABASE ai_analytics TO postgres;"
+5. Visualize Results
+View auto-generated:
 
-# 4. Install dependencies
-cd /Users/rajshekharsingh/Desktop/ai-data-analyst/backend
-pip install -q fastapi uvicorn pandas sqlalchemy psycopg2-binary python-multipart langchain openai faiss-cpu rank-bm25 sentence-transformers matplotlib pydantic python-jose passlib bcrypt PyJWT
+Interactive charts
 
-# 5. Start backend
-uvicorn main:app --host 0.0.0.0 --port 8000 &
-```
+KPI cards
 
----
+Data tables with filters
 
-## Environment Variables
-
-Create `.env` file:
-```
-# Database
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ai_analytics
-
-# Security
-SECRET_KEY=your-secret-key-min-32-chars-long
-
-# OpenAI (required for AI features)
-OPENAI_API_KEY=sk-...
-```
-
----
-
-## Project Structure
-
-```
+🛠️ Tech Stack
+Backend
+Technology	Purpose
+FastAPI	Web framework
+LangChain 0.3.x	Agent orchestration
+Groq (Llama 3.3 70B)	LLM inference
+FAISS	Vector search
+Sentence Transformers	Embeddings
+Pandas	Data processing
+SQLAlchemy	ORM
+Frontend
+Technology	Purpose
+Next.js 14	React framework
+Tailwind CSS	Styling
+Recharts	Visualizations
+Axios	HTTP client
+Lucide Icons	Icons
+📂 Project Structure
+text
 ai-data-analyst/
 ├── backend/
-│   ├── main.py           # FastAPI app entry point
-│   ├── database.py       # DB connection
-│   ├── models.py         # SQLAlchemy models
-│   ├── auth.py           # JWT authentication
-│   ├── agent.py          # LangChain agent
-│   ├── sql_tool.py       # Safe SQL execution
-│   ├── rag.py            # RAG index management
-│   ├── hybrid_search.py  # BM25 + Vector search
-│   ├── chart_agent.py    # Chart auto-selection
-│   └── requirements.txt
-└── frontend/
-    ├── app/
-    │   ├── page.tsx          # Landing page
-    │   ├── login/page.tsx    # Login page
-    │   ├── register/page.tsx # Register page
-    │   └── dashboard/page.tsx # Main dashboard
-    ├── components/
-    │   ├── Chat.tsx          # Chat interface
-    │   ├── UploadDataset.tsx # CSV upload
-    │   └── ChartRenderer.tsx # Chart display
-    ├── services/
-    │   └── api.ts            # API client
-    └── hooks/
-        └── useAuth.tsx       # Auth hook
-```
+│   ├── main.py                 # FastAPI app entry point
+│   ├── agent.py                # LangChain agent logic
+│   ├── data_cleaner.py         # Data cleaning algorithms
+│   ├── auth.py                 # Authentication & JWT
+│   ├── models.py               # Database models
+│   ├── database.py             # DB connection
+│   ├── rag.py                  # RAG implementation
+│   ├── sql_tool.py             # Safe SQL execution
+│   ├── chart_agent.py          # Chart recommendations
+│   ├── requirements.txt        # Python dependencies
+│   └── .env                    # Environment variables
+│
+├── frontend/
+│   ├── app/                    # Next.js app directory
+│   ├── components/             # React components
+│   │   ├── DataCleaningModal.tsx
+│   │   ├── DatasetTable.tsx
+│   │   └── ChatInterface.tsx
+│   ├── services/               # API services
+│   ├── package.json            # Node dependencies
+│   └── .env.local              # Frontend env vars
+│
+├── .gitignore
+└── README.md
+🧪 Testing
+Backend Tests
+bash
+cd backend
+pytest
+Frontend Tests
+bash
+cd frontend
+npm test
+🚢 Deployment
+Backend (Railway/Render/Fly.io)
+Set environment variables
 
----
+Deploy from GitHub
 
-## Common Issues
+Add PostgreSQL addon
 
-1. **"ModuleNotFoundError: No module named 'psycopg2'"**
-   - Run: `pip install psycopg2-binary`
+Update DATABASE_URL
 
-2. **"connection refused"**
-   - PostgreSQL not running: `brew services start postgresql@15`
-   - Wrong port: Default is 5432
+Frontend (Vercel/Netlify)
+Connect GitHub repository
 
-3. **"database does not exist"**
-   - Run: `createdb ai_analytics`
+Set NEXT_PUBLIC_API_URL
 
-4. **"role does not exist"**
-   - Run: `createuser -s postgres`
+Deploy automatically on push
 
-5. **"passlib" or "bcrypt" not found**
-   - Run: `pip install passlib bcrypt`
+🤝 Contributing
+Contributions are welcome! Please:
 
+Fork the repository
+
+Create a feature branch (git checkout -b feature/amazing-feature)
+
+Commit changes (git commit -m 'Add amazing feature')
+
+Push to branch (git push origin feature/amazing-feature)
+
+Open a Pull Request
+
+📝 License
+This project is licensed under the MIT License - see LICENSE file.
+
+🙏 Acknowledgments
+LangChain for agent framework
+
+Groq for blazing-fast LLM inference
+
+FastAPI for the amazing web framework
+
+Next.js for the React framework
+
+📧 Contact
+Raj Shekhar Singh - @rajshekhar
+
+Project Link: https://github.com/YOUR_USERNAME/ai-data-analyst
+
+🐛 Known Issues
+SQLite may lock on concurrent writes (use PostgreSQL for production)
+
+Large datasets (>10MB) may take longer to process
+
+Groq API has rate limits on free tier
+
+🗺️ Roadmap
+ Support for Excel files
+
+ Advanced statistical analysis
+
+ Export reports as PDF
+
+ Real-time collaboration
+
+ More chart types
+
+ SQL query builder UI
+
+ Data versioning
+
+Made with ❤️ using FastAPI, Next.js, and LangChain
