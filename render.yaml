@@ -1,0 +1,35 @@
+services:
+  # Backend API
+  - type: web
+    name: ai-data-analyst-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.10"
+      - key: GROQ_API_KEY
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: "*"
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: TRANSFORMERS_NO_TF
+        value: "1"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai-data-analyst-db
+          property: connectionString
+
+databases:
+  # PostgreSQL Database
+  - name: ai-data-analyst-db
+    plan: free
+    databaseName: ai_data_analyst
+    user: admin
