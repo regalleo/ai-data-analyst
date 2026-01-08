@@ -1,40 +1,41 @@
-"""
-Database connection and session management.
-Production-ready with proper connection pooling and dependency injection.
-Uses SQLite for development, PostgreSQL for production.
-"""
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session, declarative_base
-from typing import Generator
 import os
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-# Create Base class for models - exported for use in models.py
-Base = declarative_base()
+# Get database URL from environment
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./database.db")
 
-# Use SQLite for development (no PostgreSQL required)
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "sqlite:///./ai_analytics.db"
-)
+# Fix for Render PostgreSQL URL format
+# Render provides postgres:// but SQLAlchemy needs postgresql://
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# Connection settings
+# Connection arguments based on database type
+connect_args = {}
+if DATABASE_URL.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
+
+# Create engine with connection pooling
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {},
-    pool_pre_ping=True,
+    connect_args=connect_args,
+    pool_pre_ping=True,        # Test connections before using
+    pool_recycle=3600,         # Recycle connections after 1 hour
+    pool_size=5,               # Number of connections to maintain
+    max_overflow=10,           # Max connections beyond pool_size
+    echo=False,                # Set to True for SQL debugging
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
 
-
-def get_db() -> Generator[Session, None, None]:
-    """
-    FastAPI dependency that provides a database session.
-    Ensures proper cleanup after request completion.
-    """
+def get_db():
+    """Dependency for getting database sessions."""
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
 

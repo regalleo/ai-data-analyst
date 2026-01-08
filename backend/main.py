@@ -6,16 +6,19 @@ Production-ready API with multi-tenant data isolation.
 import os
 import sys
 import traceback
+import io 
 from dotenv import load_dotenv
 
 from fastapi.exceptions import HTTPException as FastAPIHTTPException
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.responses import StreamingResponse 
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List, Dict, Any
+from pathlib import Path
 import pandas as pd
 import numpy as np  # ✅ Add this import
 import uuid
@@ -78,7 +81,8 @@ class NumpyJSONResponse(JSONResponse):
 
 
 # -------------------- DB INIT --------------------
-Base.metadata.create_all(bind=engine)
+# Tables will be created in startup event
+
 
 # -------------------- APP --------------------
 app = FastAPI(
@@ -90,13 +94,26 @@ app = FastAPI(
 
 # Rest of your code remains the same...
 # -------------------- CORS --------------------
+# -------------------- CORS --------------------
+allowed_origins_str = os.getenv(
+    "ALLOWED_ORIGINS", 
+    "http://localhost:3000,http://localhost:3001,http://localhost:3002"
+)
+ALLOWED_ORIGINS = [origin.strip() for origin in allowed_origins_str.split(",")]
+
+logger.info(f"📡 CORS allowed origins: {ALLOWED_ORIGINS}")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=3600,
 )
+
+
 
 # -------------------- GLOBAL EXCEPTION HANDLER --------------------
 @app.exception_handler(Exception)
@@ -431,9 +448,6 @@ def download_cleaned_dataset(
     """
     Download a cleaned dataset as CSV.
     """
-    from fastapi.responses import StreamingResponse
-    import io
-    
     dataset = (
         db.query(Dataset)
         .filter(Dataset.id == dataset_id, Dataset.owner_id == current_user.id)
@@ -756,20 +770,90 @@ def visualize(
 
 # ==================== HEALTH ====================
 
+@app.get("/", tags=["Health"])
+def health_check():
+    """Basic health check for deployment platforms."""
+    return {
+        "status": "healthy",
+        "message": "AI Data Analyst API is running",
+        "version": "1.0.0"
+    }
 
-@app.get("/")
-def health():
-    return {"status": "ok", "service": "AI Data Analyst"}
+@app.get("/health", tags=["Health"])
+def detailed_health():
+    """Detailed health check with database status."""
+    try:
+        db = next(get_db())
+        db.execute(text("SELECT 1"))
+        db.close()
+        db_status = "connected"
+        
+        db_url = os.getenv("DATABASE_URL", "")
+        if "postgresql://" in db_url or "postgres://" in db_url:
+            db_type = "postgresql"
+        else:
+            db_type = "sqlite"
+            
+    except Exception as e:
+        db_status = f"error: {str(e)}"
+        db_type = "unknown"
+    
+    return {
+        "status": "healthy",
+        "database": {
+            "status": db_status,
+            "type": db_type
+        },
+        "environment": os.getenv("RENDER", "development"),
+        "api_version": "1.0.0",
+        "groq_configured": bool(os.getenv("GROQ_API_KEY"))
+    }
 
 
 # ==================== STARTUP ====================
 
-
 @app.on_event("startup")
 async def startup_event():
-    """Log startup information."""
+    """Initialize database and log startup information."""
+    logger.info("🚀 AI Data Analyst API starting...")
+    
+    # Check environment
     groq_key_set = bool(os.getenv("GROQ_API_KEY"))
-    logger.info(f"🚀 AI Data Analyst API starting...")
+    db_url = os.getenv("DATABASE_URL", "not set")
+    db_type = "postgresql" if "postgresql://" in db_url or "postgres://" in db_url else "sqlite"
+    
     logger.info(f"✓ GROQ_API_KEY loaded: {groq_key_set}")
+    logger.info(f"✓ Database type: {db_type}")
+    logger.info(f"✓ CORS origins: {', '.join(ALLOWED_ORIGINS)}")
+    
     if not groq_key_set:
         logger.warning("⚠️  GROQ_API_KEY not found in environment!")
+    
+    # Create database tables
+    try:
+        logger.info("📊 Creating database tables...")
+        Base.metadata.create_all(bind=engine)
+        logger.info("✅ Database tables created/verified")
+        
+        # Test database connection
+        db = next(get_db())
+        db.execute(text("SELECT 1"))
+        db.close()
+        logger.info("✅ Database connection successful")
+        
+        # Create necessary directories
+        Path("./data").mkdir(exist_ok=True)
+        Path("./faiss_indexes").mkdir(exist_ok=True)
+        logger.info("✅ Data directories created")
+        
+    except Exception as e:
+        logger.error(f"❌ Startup error: {e}")
+        logger.error(traceback.format_exc())
+        raise
+
+# ==================== RUN SERVER ====================
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
