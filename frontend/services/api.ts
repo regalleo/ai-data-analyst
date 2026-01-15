@@ -16,10 +16,10 @@ const getApiBaseUrl = () => {
 
 const API_BASE_URL = getApiBaseUrl();
 
-// Debug log in development (remove in production)
-if (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'production') {
-  console.log('API Base URL:', API_BASE_URL);
-}
+// Debug log - visible in browser console
+console.log('🌐 API Base URL:', API_BASE_URL);
+console.log('🔍 NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+console.log('🚀 VERCEL_ENV:', process.env.VERCEL_ENV);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
