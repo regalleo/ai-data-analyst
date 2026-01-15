@@ -1,6 +1,25 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Use environment variable, with explicit Vercel production fallback
+const getApiBaseUrl = () => {
+  // Check for Vercel environment variable first
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  // On Vercel production, default to Render backend
+  if (process.env.VERCEL_ENV === 'production') {
+    return 'https://ai-data-analyst-api.onrender.com';
+  }
+  // Local development fallback
+  return 'http://localhost:8000';
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+// Debug log in development (remove in production)
+if (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'production') {
+  console.log('API Base URL:', API_BASE_URL);
+}
 
 const api = axios.create({
   baseURL: API_BASE_URL,
