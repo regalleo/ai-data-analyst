@@ -94,25 +94,27 @@ app = FastAPI(
 
 # Rest of your code remains the same...
 # -------------------- CORS --------------------
-# -------------------- CORS --------------------
-allowed_origins_str = os.getenv(
-    "ALLOWED_ORIGINS", 
-    "http://localhost:3000,http://localhost:3001,http://localhost:3002"
-)
-ALLOWED_ORIGINS = [origin.strip() for origin in allowed_origins_str.split(",")]
+# Allow CORS for both local development and production deployments
+ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:3001", 
+    "http://localhost:3002",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:3002",
+]
 
-# Add Vercel frontend URL for production deployment
+# Add Vercel frontend URLs for production deployment
 vercel_url = os.getenv("VERCEL_FRONTEND_URL")
 if vercel_url:
     ALLOWED_ORIGINS.append(vercel_url.strip())
 
-# For production on Render, allow all vercel.app domains (Vercel preview/production URLs)
-if os.getenv("RENDER") == "true":
-    # Add common Vercel patterns
-    ALLOWED_ORIGINS.extend([
-        "https://*.vercel.app",
-        "https://vercel.app",
-    ])
+# Always allow these Vercel domains for production deployments
+ALLOWED_ORIGINS.extend([
+    "https://aidataanalyst-eight.vercel.app",
+    "https://*.vercel.app",
+    "https://vercel.app",
+])
 
 logger.info(f"📡 CORS allowed origins: {ALLOWED_ORIGINS}")
 
