@@ -1,17 +1,16 @@
 import axios from 'axios';
 
-// Use environment variable, with explicit Vercel production fallback
+// Hardcoded production URL for Vercel deployment - no environment variable needed
+// This ensures the correct API URL is always used in production
+const PRODUCTION_API_URL = 'https://ai-data-analyst-api.onrender.com';
+
 const getApiBaseUrl = () => {
-  // Check for Vercel environment variable first
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
+  // Use hardcoded production URL on Vercel
+  if (process.env.VERCEL === '1') {
+    return PRODUCTION_API_URL;
   }
-  // On Vercel production, default to Render backend
-  if (process.env.VERCEL_ENV === 'production') {
-    return 'https://ai-data-analyst-api.onrender.com';
-  }
-  // Local development fallback
-  return 'http://localhost:8000';
+  // Use environment variable for other environments
+  return process.env.NEXT_PUBLIC_API_URL || PRODUCTION_API_URL;
 };
 
 const API_BASE_URL = getApiBaseUrl();
