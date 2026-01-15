@@ -4,18 +4,22 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/services/api';
 
-// Get API base URL with Vercel production fallback
+// Hardcoded production URL for Vercel deployment - same as api.ts
+const PRODUCTION_API_URL = 'https://ai-data-analyst-api.onrender.com';
+
 const getApiBaseUrl = () => {
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
+  // Use hardcoded production URL on Vercel
+  if (process.env.VERCEL === '1') {
+    return PRODUCTION_API_URL;
   }
-  if (process.env.VERCEL_ENV === 'production') {
-    return 'https://ai-data-analyst-api.onrender.com';
-  }
-  return 'http://localhost:8000';
+  // Use environment variable for other environments
+  return process.env.NEXT_PUBLIC_API_URL || PRODUCTION_API_URL;
 };
 
 const API_BASE_URL = getApiBaseUrl();
+
+// Debug log
+console.log('🔐 Auth API Base URL:', API_BASE_URL);
 
 interface User {
   id: number;
