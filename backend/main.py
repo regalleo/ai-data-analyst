@@ -101,6 +101,19 @@ allowed_origins_str = os.getenv(
 )
 ALLOWED_ORIGINS = [origin.strip() for origin in allowed_origins_str.split(",")]
 
+# Add Vercel frontend URL for production deployment
+vercel_url = os.getenv("VERCEL_FRONTEND_URL")
+if vercel_url:
+    ALLOWED_ORIGINS.append(vercel_url.strip())
+
+# For production on Render, allow all vercel.app domains (Vercel preview/production URLs)
+if os.getenv("RENDER") == "true":
+    # Add common Vercel patterns
+    ALLOWED_ORIGINS.extend([
+        "https://*.vercel.app",
+        "https://vercel.app",
+    ])
+
 logger.info(f"📡 CORS allowed origins: {ALLOWED_ORIGINS}")
 
 app.add_middleware(
