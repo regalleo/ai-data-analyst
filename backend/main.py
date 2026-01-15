@@ -111,7 +111,7 @@ if vercel_url:
 
 # Always allow these Vercel domains for production deployments
 ALLOWED_ORIGINS.extend([
-    "https://aidataanalyst-eight.vercel.app",
+    "https://ai-data-analyst-lac.vercel.app",
     "https://*.vercel.app",
     "https://vercel.app",
 ])
