@@ -4,6 +4,19 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/services/api';
 
+// Get API base URL with Vercel production fallback
+const getApiBaseUrl = () => {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  if (process.env.VERCEL_ENV === 'production') {
+    return 'https://ai-data-analyst-api.onrender.com';
+  }
+  return 'http://localhost:8000';
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
 interface User {
   id: number;
   email: string;
@@ -43,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Fetch user info from /me endpoint
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/auth/me`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
         headers: {
           'Authorization': `Bearer ${access_token}`,
         },
