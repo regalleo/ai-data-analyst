@@ -11,12 +11,16 @@ from jwt import PyJWTError
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from database import get_db
 from models import User
 
 # Security configuration - use environment variables in production
-SECRET_KEY = "your-secret-key-change-in-production"
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
